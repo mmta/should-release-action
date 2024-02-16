@@ -1,0 +1,1 @@
+# cargo-should-release-action
