@@ -34,8 +34,7 @@ struct Package {
 
 fn set_github_output(key: &str, value: &str) -> Result<()> {
     let cmd_text = format!("echo {}={} >> $GITHUB_OUTPUT", key, value);
-    println!("running: {}", cmd_text);
-    Command::new("/usr/bin/bash").arg("-c").arg(cmd_text).output()?;
+    Command::new("sh").arg("-c").arg(cmd_text).output()?;
     Ok(())
 }
 
@@ -244,7 +243,6 @@ mod test {
         assert!(check_should_release("1.2.3", ""));
     }
     #[test]
-    /*
     fn test_github_output() {
         let file = tempfile::NamedTempFile::new().unwrap();
         let path = file.into_temp_path();
@@ -259,7 +257,6 @@ mod test {
         let content = std::fs::read_to_string(p).unwrap();
         assert!(content.contains("again=once"));
     }
-    */
     #[test]
     fn test_main() {
         env::set_var(INPUT_TAG_VAR, "v1.2.3");
