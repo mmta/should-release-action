@@ -45,14 +45,16 @@ fn parse_env(env_var: &str) -> Result<String, std::env::VarError> {
             Ok(v)
         }
         Err(e) => {
-            println!("warning: unable to read input {}, reason: {}", env_var.to_lowercase(), e);
+            println!("warning: unable to read input {}, reason: {}", env_var, e);
             Err(e)
         }
     }
 }
 fn parse_input_tag(env_var: &str) -> String {
     let input_var = match parse_env(env_var) {
-        Ok(v) => v,
+        Ok(v) => {
+            if v.is_empty() { DEFAULT_TAG_VAR.to_string() } else { v }
+        }
         Err(_) => DEFAULT_TAG_VAR.to_string(),
     };
     let re = Regex::new(r"^[^0-9]*").unwrap();
@@ -97,9 +99,9 @@ fn check_should_release(version_in_file: &str, latest_tag: &str) -> bool {
 fn main() -> Result<()> {
     let path = parse_env(INPUT_FILE_VAR)?;
     println!(
-        "Configuration:\n\nInput file: {}\nInput variable name: {} (defaults to: {})\nOutput variable names: {}, {}\n",
+        "Provided configuration:\n\nInput file: {}\nInput variable name: {} (defaults to: {})\nOutput variable names: {}, {}\n",
         &path,
-        INPUT_TAG_VAR.to_lowercase(),
+        INPUT_TAG_VAR,
         DEFAULT_TAG_VAR,
         OUTPUT_VERSION_VAR,
         OUTPUT_SHOULD_RELEASE_VAR
@@ -108,7 +110,7 @@ fn main() -> Result<()> {
     println!("Execution logs:\n");
 
     let input_tag = parse_input_tag(INPUT_TAG_VAR);
-    println!("\nusing {}: {}\n", INPUT_TAG_VAR.to_lowercase(), input_tag);
+    println!("\nusing {}: {}\n", INPUT_TAG_VAR, input_tag);
 
     let content = std::fs::read_to_string(&path).context("cannot read content of the input file")?;
 
@@ -170,6 +172,9 @@ mod test {
             assert_ne!(parse_input_tag(INPUT_TAG_VAR), expected);
         }
         assert_eq!(parse_input_tag("NON_EXISTING_VAR"), DEFAULT_TAG_VAR);
+
+        env::set_var("EMPTY_VAR", "");
+        assert_eq!(parse_input_tag("EMPTY_VAR"), DEFAULT_TAG_VAR);
     }
     #[test]
     fn test_parse_cargo_toml() {
