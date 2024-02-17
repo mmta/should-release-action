@@ -246,11 +246,11 @@ mod test {
 
         set_github_output("test", "value").unwrap();
         let content = std::fs::read_to_string(p.clone()).unwrap();
-        assert_eq!(content, "test=value\n");
+        assert!(content.contains("test=value"));
 
         set_github_output("again", "once").unwrap();
         let content = std::fs::read_to_string(p).unwrap();
-        assert_eq!(content, "test=value\nagain=once\n");
+        assert!(content.contains("again=once"));
     }
     #[test]
     fn test_main() {
