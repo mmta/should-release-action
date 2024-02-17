@@ -23,9 +23,13 @@ jobs:
           latest: true
           prerelease: false
           doNotFailIfNotFound: true
+      # the container image may not exist yet, so use local version
+      - name: prepare should-release-action
+        run: |
+          cp ./docker/Dockerfile ./
+          sed -i 's/^WORKDIR.*//' Dockerfile 
       - name: compare versions
-        # we use @main ourselves to build the container images and push them to dockerhub
-        uses: mmta/should-release-action@main
+        uses: ./
         id: comp_ver
         with:
           file_path: Cargo.toml
