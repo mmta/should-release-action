@@ -1,0 +1,45 @@
+name: publish
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+
+  check-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.comp_ver.outputs.should_release }}
+      current_version: ${{ steps.comp_ver.outputs.current_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cardinalby/git-get-release-action@1.2.5
+        id: check_rel
+        name: get latest release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          latest: true
+          prerelease: false
+          doNotFailIfNotFound: true
+      - uses: mmta/should-release-action@main
+        name: compare versions
+        id: comp_ver
+        with:
+          file_path: Cargo.toml
+          release_tag: ${{ steps.check_rel.outputs.tag_name }}
+
+  publish-new-version:
+    needs: check-versions
+    if: needs.check-versions.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: create release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          tag_name: v${{ needs.check-versions.outputs.current_version }}
+          draft: false
+          prerelease: false
