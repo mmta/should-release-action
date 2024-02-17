@@ -22,15 +22,18 @@ jobs:
           fail_ci_if_error: true
           files: coverage/lcov.info
           flags: unittests
-          token: ${{ secrets.CODECOV_TOKEN }}             
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: prepare integration tests
+        run: |
+          cp ./docker/Dockerfile ./
       - name: integration test 1
         id: integration-test-1
-        uses: ./docker/
+        uses: ./
         with:
           file_path: Cargo.toml
       - name: integration test 2
         id: integration-test-2
-        uses: ./docker/
+        uses: ./
         with:
           file_path: Cargo.toml
           release_tag: v9001.0.1
