@@ -35,12 +35,7 @@ struct Package {
 fn set_github_output(key: &str, value: &str) -> Result<()> {
     let cmd_text = format!("echo {}={} >> $GITHUB_OUTPUT", key, value);
     println!("running: {}", cmd_text);
-    let res = Command::new("which").arg("sh").output()?;
-    println!("which /bin/sh output: {:?}", res);
-    if !res.status.success() {
-        return Err(anyhow!("cannot find /bin/sh"));
-    }
-    Command::new("/bin/sh").arg("-c").arg(cmd_text).output()?;
+    Command::new("/usr/bin/bash").arg("-c").arg(cmd_text).output()?;
     Ok(())
 }
 
