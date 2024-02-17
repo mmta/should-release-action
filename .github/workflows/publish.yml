@@ -23,8 +23,9 @@ jobs:
           latest: true
           prerelease: false
           doNotFailIfNotFound: true
-      - uses: mmta/should-release-action@main
-        name: compare versions
+      - name: compare versions
+        # we use @main ourselves to build the container images and push them to dockerhub
+        uses: mmta/should-release-action@main
         id: comp_ver
         with:
           file_path: Cargo.toml
@@ -43,3 +44,11 @@ jobs:
           tag_name: v${{ needs.check-versions.outputs.current_version }}
           draft: false
           prerelease: false
+      - name: login to dockerhub
+        uses: "docker/login-action@v2"
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: build and push image
+        run: |
+          ./scripts/dockerbuild.sh mmta/should-release-action push          
