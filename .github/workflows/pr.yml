@@ -26,7 +26,7 @@ jobs:
       - name: prepare integration tests
         run: |
           cp ./docker/Dockerfile ./
-          sed 's/^WORKDIR.*//' Dockerfile 
+          sed -i 's/^WORKDIR.*//' Dockerfile 
       - name: integration test 1
         id: integration-test-1
         uses: ./
