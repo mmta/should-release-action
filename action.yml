@@ -2,16 +2,25 @@
 name: should-release
 author: mmta
 description: |
-  Check if a release should be made by comparing supplied release tag with version in Cargo.toml,
-  package.json, or version.txt file. 
+  This action lets you control releases and tags through the version number in your project files 
+  (Cargo.toml, package.json, or version.txt). 
 
-  Output will be set to `true` if the version on file is higher and release should be made, `false` otherwise.
+  It does this by comparing the version on file with the release tag supplied as input, which is meant to be
+  supplied by another action that reads the latest release tag from the repository.
+
+  If the version on file is higher than the release tag supplied, `should-release` output will be set to `true` 
+  and `current_version` output will be set to the version on file. The next step in the workflow can then use those
+  outputs to trigger a Github release and build artifacts as needed. 
+
+  If the version on file is lower or equal to the `release_tag` input, `should-release` output will be set to `false`.
 inputs:
   file_path:
     description: path to Cargo.toml, package.json, or version.txt
     required: true
   release_tag:
-    description: the release tag to compare with, defaults to v0.0.0 if not supplied or empty
+    description: |
+      the release tag to compare with, defaults to v0.0.0 if not supplied or empty. That default essentially means
+      always release, which is useful for the first release of a project
 outputs:
   should_release:
     description: true if the version on file is higher and release should be made, false otherwise
