@@ -8,4 +8,4 @@ jobs:
     steps:
       - uses: bcoe/conventional-release-labels@v1
         with:
-          ignored_types: 'chore,ci,build'
+            ignored_types: '[ "chore", "ci", "build" ]'
