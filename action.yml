@@ -1,0 +1,26 @@
+# action.yml
+name: should-release
+author: mmta
+description: |
+  Check if a release should be made by comparing supplied release tag with version in Cargo.toml,
+  package.json, or version.txt file. 
+
+  Output will be set to `true` if the version on file is higher and release should be made, `false` otherwise.
+inputs:
+  file_path:
+    description: path to Cargo.toml, package.json, or version.txt
+    required: true
+  release_tag:
+    description: the release tag to compare with, defaults to v0.0.0 if not supplied or empty
+outputs:
+  should_release:
+    description: true if the version on file is higher and release should be made, false otherwise
+  current_version:
+    description: the version on file, should be used to create a release tag by the next step in the workflow
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.file_path }}
+    - ${{ inputs.release_tag }}
