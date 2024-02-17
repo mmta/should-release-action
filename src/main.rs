@@ -142,7 +142,7 @@ fn main() -> Result<()> {
         (OUTPUT_SHOULD_RELEASE_VAR, should_release.to_string()),
     ] {
         println!("setting Github output: {} = {}", v.0, v.1);
-        set_github_output(v.0, &v.1).expect("cannot execute set_github_output");
+        set_github_output(v.0, &v.1)?;
     }
     Ok(())
 }
