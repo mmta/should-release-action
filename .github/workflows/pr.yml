@@ -1,4 +1,4 @@
-name: Test and build
+name: PR
 
 on:
   pull_request:
@@ -12,11 +12,17 @@ jobs:
       - uses: crusty-pie/toolchain@v1
         with:
           profile: minimal
-      - name: unit test
+      - uses: taiki-e/install-action@cargo-llvm-cov
+      - name: run tests and their coverage
         run: |
-          cargo test
-      - name: docker image build test
-        run: docker build . -f Dockerfile
+          ./scripts/coverage.sh
+      - name: coverage upload
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          files: coverage/lcov.info
+          flags: unittests
+          token: ${{ secrets.CODECOV_TOKEN }}             
       - name: integration test 1
         id: integration-test-1
         uses: ./
@@ -33,10 +39,8 @@ jobs:
         with:
           expected: true
           actual: ${{ steps.integration-test-1.outputs.should_release }}
-  
       - uses: nick-fields/assert-action@v2
         name: verify integration test 2 result
         with:
           expected: false
-          actual: ${{ steps.integration-test-2.outputs.should_release }}          
-        
+          actual: ${{ steps.integration-test-2.outputs.should_release }}
