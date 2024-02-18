@@ -13,6 +13,7 @@ jobs:
         with:
           profile: minimal
       - uses: taiki-e/install-action@cargo-llvm-cov
+      - uses: Swatinem/rust-cache@v2
       - name: run tests and their coverage
         run: |
           ./scripts/coverage.sh
