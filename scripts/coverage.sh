@@ -5,4 +5,7 @@ cd $root
 
 mkdir -p ./coverage
 
-exec cargo llvm-cov --lcov --output-path ./coverage/lcov.info
+llvm_cmd="llvm-cov --lcov --output-path ./coverage/lcov.info"
+cargo_cmd="cargo ${llvm_cmd}"
+
+[ "$1" = "watch" ] && exec cargo watch -x "${llvm_cmd}" || cargo ${llvm_cmd}
